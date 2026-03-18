@@ -5,11 +5,12 @@ from django_query_budget.actions import (
     register_action,
 )
 from django_query_budget.decorators import query_budget, query_tag
-from django_query_budget.hooks import BaseHook, HookMode, register_hook
+from django_query_budget.hooks import BaseHook, ExecutionMode, HookMode, register_hook
 
 __all__ = [
     "BaseHook",
-    "HookMode",
+    "ExecutionMode",
+    "HookMode",  # Backwards-compatible alias for ExecutionMode
     "QueryBudgetExceeded",
     "query_budget",
     "query_tag",

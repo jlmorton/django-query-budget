@@ -75,13 +75,13 @@ register_action("SLACK_ALERT", slack_alert)
 To make a custom action synchronous:
 
 ```python
-from django_query_budget import register_action, HookMode
+from django_query_budget import register_action, ExecutionMode
 
 def block_and_alert(budget, tracker, violation):
     """Synchronous action that must complete before the query proceeds."""
     ...
 
-register_action("BLOCK_AND_ALERT", block_and_alert, mode=HookMode.SYNC)
+register_action("BLOCK_AND_ALERT", block_and_alert, mode=ExecutionMode.SYNC)
 ```
 
 Then use it in your configuration:

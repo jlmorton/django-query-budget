@@ -72,9 +72,9 @@ If the queue is full (default max: 10,000), new events are dropped. A counter tr
 Hooks execute inline on the calling thread. Use this only when the hook must run before the query lifecycle continues:
 
 ```python
-from django_query_budget import register_hook, HookMode
+from django_query_budget import register_hook, ExecutionMode
 
-register_hook("on_query_executed", my_callback, mode=HookMode.SYNC)
+register_hook("on_query_executed", my_callback, mode=ExecutionMode.SYNC)
 ```
 
 :::{warning}
@@ -86,10 +86,10 @@ Sync hooks add latency to every query. Keep them fast and never do I/O in a sync
 For hooks that need initialization or state:
 
 ```python
-from django_query_budget import BaseHook, HookMode
+from django_query_budget import BaseHook, ExecutionMode
 
 class MetricsHook(BaseHook):
-    mode = HookMode.ASYNC
+    mode = ExecutionMode.ASYNC
 
     def __init__(self, statsd_client):
         self.client = statsd_client

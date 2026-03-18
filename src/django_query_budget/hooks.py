@@ -9,9 +9,13 @@ logger = logging.getLogger("django.query_budget.hooks")
 HookCallable = Callable[..., None]
 
 
-class HookMode(enum.Enum):
+class ExecutionMode(enum.Enum):
     SYNC = "sync"
     ASYNC = "async"
+
+
+# Backwards-compatible alias
+HookMode = ExecutionMode
 
 
 class BaseHook:

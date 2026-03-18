@@ -85,33 +85,35 @@ Register a custom action by name.
 ### register_hook
 
 ```python
-from django_query_budget import register_hook, HookMode
+from django_query_budget import register_hook, ExecutionMode
 
-register_hook("on_query_executed", my_callback, mode=HookMode.ASYNC)
+register_hook("on_query_executed", my_callback, mode=ExecutionMode.ASYNC)
 ```
 
 Register a hook for an event. See [Hooks](hooks.md) for details.
 
 ---
 
-### HookMode
+### ExecutionMode
 
 ```python
-from django_query_budget import HookMode
+from django_query_budget import ExecutionMode
 
-HookMode.SYNC   # Execute inline
-HookMode.ASYNC  # Execute on background thread (default)
+ExecutionMode.SYNC   # Execute inline
+ExecutionMode.ASYNC  # Execute on background thread (default)
 ```
+
+`HookMode` is available as a backwards-compatible alias for `ExecutionMode`.
 
 ---
 
 ### BaseHook
 
 ```python
-from django_query_budget import BaseHook, HookMode
+from django_query_budget import BaseHook, ExecutionMode
 
 class MyHook(BaseHook):
-    mode = HookMode.ASYNC
+    mode = ExecutionMode.ASYNC
 
     def __call__(self, **kwargs):
         ...
