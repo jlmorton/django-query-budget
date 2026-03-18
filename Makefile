@@ -1,11 +1,13 @@
 .PHONY: test test-sqlite test-postgres test-mysql test-redis test-all \
        services-up services-down services-wait clean
 
+UV_RUN = uv run --extra dev
+
 # Default: run SQLite tests (no Docker needed)
 test: test-sqlite
 
 test-sqlite:
-	uv run pytest tests/ -v --tb=short
+	$(UV_RUN) pytest tests/ -v --tb=short
 
 # Start all Docker services
 services-up:
@@ -33,7 +35,7 @@ test-postgres: services-up
 	POSTGRES_PASSWORD=postgres \
 	POSTGRES_HOST=localhost \
 	POSTGRES_PORT=5432 \
-	uv run --extra postgres pytest tests/ -v --tb=short
+	$(UV_RUN) --extra postgres pytest tests/ -v --tb=short
 
 test-mysql: services-up
 	DATABASE_BACKEND=mysql \
@@ -42,11 +44,11 @@ test-mysql: services-up
 	MYSQL_PASSWORD=root \
 	MYSQL_HOST=127.0.0.1 \
 	MYSQL_PORT=3306 \
-	uv run --extra mysql pytest tests/ -v --tb=short
+	$(UV_RUN) --extra mysql pytest tests/ -v --tb=short
 
 test-redis: services-up
 	REDIS_URL=redis://localhost:6379/0 \
-	uv run --extra redis pytest tests/ -v --tb=short
+	$(UV_RUN) --extra redis pytest tests/ -v --tb=short
 
 # Run all backends
 test-all: services-up
