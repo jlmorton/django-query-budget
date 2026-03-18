@@ -3,6 +3,7 @@ import pytest
 
 from django_query_budget.actions import _registry as _action_registry
 from django_query_budget.hooks import _registry as _hook_registry
+from django_query_budget.resolution import clear_trackers
 
 
 @pytest.fixture(autouse=True)
@@ -15,3 +16,11 @@ def _clean_registries():
     _action_registry.update(action_snapshot)
     _hook_registry.clear()
     _hook_registry.update(hook_snapshot)
+
+
+@pytest.fixture(autouse=True)
+def _clean_trackers():
+    """Clear tracker state between tests."""
+    clear_trackers()
+    yield
+    clear_trackers()
