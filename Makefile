@@ -1,10 +1,18 @@
-.PHONY: test test-sqlite test-postgres test-mysql test-redis test-all services services-up services-down services-wait clean
+.PHONY: test test-sqlite test-postgres test-mysql test-redis test-all \
+       services-up services-down services-wait deps-postgres deps-mysql clean
 
 # Default: run SQLite tests (no Docker needed)
 test: test-sqlite
 
 test-sqlite:
 	pytest tests/ -v --tb=short
+
+# Install database drivers
+deps-postgres:
+	pip install psycopg2-binary 2>/dev/null || pip install psycopg[binary]
+
+deps-mysql:
+	pip install mysqlclient
 
 # Start all Docker services
 services-up:
@@ -25,7 +33,7 @@ services-wait:
 	@echo "All services ready."
 
 # Individual backend tests
-test-postgres: services-up
+test-postgres: services-up deps-postgres
 	DATABASE_BACKEND=postgres \
 	POSTGRES_DB=test_query_budget \
 	POSTGRES_USER=postgres \
@@ -34,7 +42,7 @@ test-postgres: services-up
 	POSTGRES_PORT=5432 \
 	pytest tests/ -v --tb=short
 
-test-mysql: services-up
+test-mysql: services-up deps-mysql
 	DATABASE_BACKEND=mysql \
 	MYSQL_DATABASE=test_query_budget \
 	MYSQL_USER=root \
@@ -48,7 +56,7 @@ test-redis: services-up
 	pytest tests/ -v --tb=short
 
 # Run all backends
-test-all: services-up
+test-all: services-up deps-postgres deps-mysql
 	@echo "=== SQLite ==="
 	$(MAKE) test-sqlite
 	@echo ""
