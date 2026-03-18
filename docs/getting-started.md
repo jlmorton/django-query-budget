@@ -2,6 +2,8 @@
 
 ## Installation
 
+Install from [PyPI](https://pypi.org/project/django-query-budget/):
+
 ```bash
 pip install django-query-budget
 ```

@@ -14,6 +14,20 @@ Django Query Budget lets you define and enforce budgets on database query execut
 - **Cluster-wide sync** — Optional eventual consistency across processes via Redis or database backends
 - **Async-safe** — Uses `contextvars.ContextVar` for correct behavior in both WSGI and ASGI deployments
 
+## Installation
+
+Install from [PyPI](https://pypi.org/project/django-query-budget/):
+
+```bash
+pip install django-query-budget
+```
+
+For Redis-based cluster sync:
+
+```bash
+pip install django-query-budget[redis]
+```
+
 ## Quick Example
 
 ```python

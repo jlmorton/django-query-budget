@@ -1,5 +1,10 @@
 # Django Query Budget
 
+[![PyPI version](https://img.shields.io/pypi/v/django-query-budget.svg)](https://pypi.org/project/django-query-budget/)
+[![Python versions](https://img.shields.io/pypi/pyversions/django-query-budget.svg)](https://pypi.org/project/django-query-budget/)
+[![Documentation](https://readthedocs.org/projects/django-query-budget/badge/?version=latest)](https://django-query-budget.readthedocs.io/en/latest/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 Database query budget enforcement for Django.
 
 Define budgets on cumulative query runtime, query count, and per-query duration within rolling time windows. When a budget is exceeded, pluggable actions respond — log, reject, or custom.
@@ -13,11 +18,21 @@ Define budgets on cumulative query runtime, query count, and per-query duration 
 - Optional cluster-wide sync via Redis or database backends
 - Works with Django 5.0+ (WSGI and ASGI)
 
-## Quick start
+## Installation
+
+Install from [PyPI](https://pypi.org/project/django-query-budget/):
 
 ```bash
 pip install django-query-budget
 ```
+
+For Redis-based cluster sync:
+
+```bash
+pip install django-query-budget[redis]
+```
+
+## Quick start
 
 ```python
 # settings.py
