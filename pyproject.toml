@@ -4,11 +4,39 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-query-budget"
-version = "0.1.0"
+version = "0.1.1"
 description = "Database query budget enforcement for Django"
+readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
+authors = [
+    { name = "Jason Morton" },
+]
+keywords = ["django", "database", "query", "budget", "circuit-breaker", "performance"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Django",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Database",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = ["django>=4.2"]
+
+[project.urls]
+Documentation = "https://django-query-budget.readthedocs.io/en/latest/"
+Repository = "https://github.com/jlmorton/django-query-budget"
+Issues = "https://github.com/jlmorton/django-query-budget/issues"
+Changelog = "https://django-query-budget.readthedocs.io/en/latest/changelog/"
 
 [project.optional-dependencies]
 redis = ["redis>=4.0"]
