@@ -1,5 +1,5 @@
 .PHONY: test test-sqlite test-postgres test-mysql test-redis test-all \
-       services-up services-down services-wait clean
+       services-up services-down services-wait clean build publish
 
 UV_RUN = uv run --extra dev
 
@@ -66,4 +66,13 @@ test-all: services-up
 	@echo ""
 	@echo "All backends passed."
 
+# Build and publish
+build:
+	rm -rf dist/
+	uv run python -m build
+
+publish: build
+	uv run twine upload dist/*
+
 clean: services-down
+	rm -rf dist/ *.egg-info src/*.egg-info
