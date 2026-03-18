@@ -14,10 +14,6 @@ jobs:
       matrix:
         python-version: ["3.12", "3.13"]
         django-version: ["5.0", "5.1", "5.2", "6.0"]
-        exclude:
-          # Django 6.0 requires Python 3.12+
-          # (no exclusions needed, all combos valid)
-
     name: Python ${{ matrix.python-version }} / Django ${{ matrix.django-version }}
 
     steps:
