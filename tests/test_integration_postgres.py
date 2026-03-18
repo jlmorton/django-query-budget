@@ -7,7 +7,7 @@ import os
 
 import pytest
 from django.db import connection
-from django.test import TestCase, override_settings
+from django.test import TransactionTestCase, override_settings
 
 from django_query_budget import QueryBudgetExceeded, query_budget, query_tag
 from django_query_budget.resolution import clear_trackers, get_tracker
@@ -22,7 +22,7 @@ pytestmark = pytest.mark.skipif(
     "default": {"total_runtime": "1h", "window": "5m", "action": "LOG"},
     "tags": {"reporting": {"total_runtime": "10s", "window": "5m", "action": "REJECT"}},
 })
-class TestPostgresIntegration(TestCase):
+class TestPostgresIntegration(TransactionTestCase):
     def setUp(self):
         clear_trackers()
         with connection.cursor() as cursor:

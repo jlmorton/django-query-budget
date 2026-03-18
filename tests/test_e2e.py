@@ -2,7 +2,7 @@
 import pytest
 from django.db import connection
 from django.http import HttpResponse
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import RequestFactory, TransactionTestCase, override_settings
 
 from django_query_budget import QueryBudgetExceeded, query_budget, query_tag
 from django_query_budget.resolution import clear_trackers, get_tracker
@@ -42,7 +42,7 @@ def _query_items():
     "default": {"total_runtime": "1h", "window": "5m", "action": "LOG"},
     "tags": {"reporting": {"total_runtime": "10s", "window": "5m", "action": "REJECT"}},
 })
-class TestE2EQueryBudget(TestCase):
+class TestE2EQueryBudget(TransactionTestCase):
     def setUp(self):
         clear_trackers()
         _create_test_table()
