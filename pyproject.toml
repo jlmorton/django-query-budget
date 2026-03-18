@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-query-budget"
+version = "0.1.0"
+description = "Database query budget enforcement for Django"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = ["django>=4.2"]
+
+[project.optional-dependencies]
+redis = ["redis>=4.0"]
+dev = ["pytest", "pytest-django", "redis"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.django_settings"
+pythonpath = ["src", "."]
