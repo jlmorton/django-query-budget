@@ -7,8 +7,19 @@ from typing import Any, Callable
 from django_query_budget.actions import get_action
 from django_query_budget.constraints import check_constraints
 from django_query_budget.fingerprint import fingerprint_sql
-from django_query_budget.hooks import fire_hooks
+from django_query_budget.hooks import HookMode, fire_hooks, _get_worker
 from django_query_budget.resolution import current_budget, current_tag, get_tracker
+
+
+def _invoke_action(action_callable, mode, budget, tracker, violation):
+    """Invoke an action either synchronously or via the async hook queue."""
+    if mode == HookMode.SYNC:
+        action_callable(budget, tracker, violation)
+    else:
+        _get_worker().enqueue(
+            lambda **kw: action_callable(kw["budget"], kw["tracker"], kw["violation"]),
+            {"budget": budget, "tracker": tracker, "violation": violation},
+        )
 
 _wrapper_active: contextvars.ContextVar[bool] = contextvars.ContextVar(
     "query_budget_wrapper_active", default=False
@@ -47,9 +58,9 @@ def query_budget_wrapper(execute: Callable, sql: str, params: Any, many: bool, c
     # Pre-execution check
     violation = check_constraints(tracker, budget, skip_single_query=True)
     if violation:
-        action = get_action(budget.action)
+        action_callable, action_mode = get_action(budget.action)
         fire_hooks("on_budget_violation", budget=budget, tracker=tracker, violation=violation)
-        action(budget, tracker, violation)
+        _invoke_action(action_callable, action_mode, budget, tracker, violation)
 
     # Execute with re-entrancy guard
     token = _wrapper_active.set(True)
@@ -67,8 +78,8 @@ def query_budget_wrapper(execute: Callable, sql: str, params: Any, many: bool, c
     # Post-execution check
     violation = check_constraints(tracker, budget)
     if violation:
-        action = get_action(budget.action)
+        action_callable, action_mode = get_action(budget.action)
         fire_hooks("on_budget_violation", budget=budget, tracker=tracker, violation=violation)
-        action(budget, tracker, violation)
+        _invoke_action(action_callable, action_mode, budget, tracker, violation)
 
     return result

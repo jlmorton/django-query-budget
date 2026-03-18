@@ -45,6 +45,15 @@ except QueryBudgetExceeded as e:
 
 **Important:** REJECT prevents the *next* query after the budget is exceeded. The query that pushed the budget over the limit has already completed. For `max_single_query`, the slow query has already finished — the action fires after the fact.
 
+## Sync vs async actions
+
+Actions support two execution modes:
+
+- **SYNC** — Executes inline on the calling thread. The query waits for the action to complete. Required for actions that need to affect control flow (like REJECT raising an exception).
+- **ASYNC** — Enqueued to a background thread. The query proceeds immediately without waiting. Ideal for I/O-bound actions like sending alerts.
+
+Built-in actions (`LOG`, `REJECT`) are **synchronous**. Custom actions default to **async** — this prevents slow actions (like sending a Slack message) from adding latency to every query.
+
 ## Custom actions
 
 Register custom actions with `register_action`:
@@ -59,7 +68,20 @@ def slack_alert(budget, tracker, violation):
         text=f"Query budget exceeded: {violation.message}",
     )
 
+# Custom actions are async by default — this won't block queries
 register_action("SLACK_ALERT", slack_alert)
+```
+
+To make a custom action synchronous:
+
+```python
+from django_query_budget import register_action, HookMode
+
+def block_and_alert(budget, tracker, violation):
+    """Synchronous action that must complete before the query proceeds."""
+    ...
+
+register_action("BLOCK_AND_ALERT", block_and_alert, mode=HookMode.SYNC)
 ```
 
 Then use it in your configuration:
@@ -90,6 +112,10 @@ Parameters:
   - `limit_value` — The budget limit
   - `fingerprint` — The query fingerprint (for `max_single_query` violations)
   - `message` — Human-readable description
+
+:::{note}
+Async actions share the same bounded queue and background thread as async hooks. If the queue is full (default 10,000), the action is dropped and a counter is incremented.
+:::
 
 ### Custom constraints
 

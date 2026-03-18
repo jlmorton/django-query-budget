@@ -117,9 +117,10 @@ class TestE2EQueryBudget(TransactionTestCase):
 
     def test_custom_action_called(self):
         from django_query_budget import register_action
+        from django_query_budget.hooks import HookMode
         calls = []
         def my_action(budget, tracker, violation): calls.append(violation)
-        register_action("CUSTOM_E2E", my_action)
+        register_action("CUSTOM_E2E", my_action, mode=HookMode.SYNC)
         tracker = get_tracker("named:e2e-custom", window_seconds=300.0)
         tracker.record(duration=100.0, fingerprint="setup")
         with query_budget(total_runtime="1s", window="5m", action="CUSTOM_E2E", name="e2e-custom"):
