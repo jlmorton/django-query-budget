@@ -1,4 +1,4 @@
-"""End-to-end integration tests with a real Django app and SQLite."""
+"""End-to-end integration tests with a real Django app."""
 import pytest
 from django.db import connection
 from django.http import HttpResponse
@@ -9,10 +9,23 @@ from django_query_budget.resolution import clear_trackers, get_tracker
 
 
 def _create_test_table():
+    vendor = connection.vendor
     with connection.cursor() as cursor:
-        cursor.execute(
-            "CREATE TABLE IF NOT EXISTS test_item (id INTEGER PRIMARY KEY, name TEXT, value INTEGER)"
-        )
+        if vendor == "postgresql":
+            cursor.execute(
+                "CREATE TABLE IF NOT EXISTS test_item "
+                "(id SERIAL PRIMARY KEY, name TEXT, value INTEGER)"
+            )
+        elif vendor == "mysql":
+            cursor.execute(
+                "CREATE TABLE IF NOT EXISTS test_item "
+                "(id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), value INT)"
+            )
+        else:
+            cursor.execute(
+                "CREATE TABLE IF NOT EXISTS test_item "
+                "(id INTEGER PRIMARY KEY, name TEXT, value INTEGER)"
+            )
 
 def _insert_test_data(n=10):
     with connection.cursor() as cursor:
