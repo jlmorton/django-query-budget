@@ -12,7 +12,10 @@ dependencies = ["django>=4.2"]
 
 [project.optional-dependencies]
 redis = ["redis>=4.0"]
+postgres = ["psycopg2-binary"]
+mysql = ["mysqlclient"]
 dev = ["pytest", "pytest-django", "redis"]
+dev-all = ["pytest", "pytest-django", "redis", "psycopg2-binary", "mysqlclient"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
