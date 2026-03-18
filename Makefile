@@ -1,18 +1,11 @@
 .PHONY: test test-sqlite test-postgres test-mysql test-redis test-all \
-       services-up services-down services-wait deps-postgres deps-mysql clean
+       services-up services-down services-wait clean
 
 # Default: run SQLite tests (no Docker needed)
 test: test-sqlite
 
 test-sqlite:
-	pytest tests/ -v --tb=short
-
-# Install database drivers
-deps-postgres:
-	pip install psycopg2-binary 2>/dev/null || pip install psycopg[binary]
-
-deps-mysql:
-	pip install mysqlclient
+	uv run pytest tests/ -v --tb=short
 
 # Start all Docker services
 services-up:
@@ -33,30 +26,30 @@ services-wait:
 	@echo "All services ready."
 
 # Individual backend tests
-test-postgres: services-up deps-postgres
+test-postgres: services-up
 	DATABASE_BACKEND=postgres \
 	POSTGRES_DB=test_query_budget \
 	POSTGRES_USER=postgres \
 	POSTGRES_PASSWORD=postgres \
 	POSTGRES_HOST=localhost \
 	POSTGRES_PORT=5432 \
-	pytest tests/ -v --tb=short
+	uv run --extra postgres pytest tests/ -v --tb=short
 
-test-mysql: services-up deps-mysql
+test-mysql: services-up
 	DATABASE_BACKEND=mysql \
 	MYSQL_DATABASE=test_query_budget \
 	MYSQL_USER=root \
 	MYSQL_PASSWORD=root \
 	MYSQL_HOST=127.0.0.1 \
 	MYSQL_PORT=3306 \
-	pytest tests/ -v --tb=short
+	uv run --extra mysql pytest tests/ -v --tb=short
 
 test-redis: services-up
 	REDIS_URL=redis://localhost:6379/0 \
-	pytest tests/ -v --tb=short
+	uv run --extra redis pytest tests/ -v --tb=short
 
 # Run all backends
-test-all: services-up deps-postgres deps-mysql
+test-all: services-up
 	@echo "=== SQLite ==="
 	$(MAKE) test-sqlite
 	@echo ""
