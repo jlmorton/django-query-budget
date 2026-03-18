@@ -69,10 +69,10 @@ test-all: services-up
 # Build and publish
 build:
 	rm -rf dist/
-	uv run python -m build
+	uv build
 
 publish: build
-	uv run twine upload dist/*
+	uv run --with twine twine upload dist/*
 
 clean: services-down
 	rm -rf dist/ *.egg-info src/*.egg-info
